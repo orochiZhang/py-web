@@ -1,0 +1,4 @@
+/storage/*.key
+/.idea
+/.vagrant
+*pyc
