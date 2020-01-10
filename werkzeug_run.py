@@ -1,8 +1,13 @@
+# -*- coding: utf-8 -*-
+
 from werkzeug.wrappers import Request, Response
+
+
 
 @Request.application
 def application(request):
-	print(request.environ)
+	
+	
 	return Response("Hello, World!")
 
 if __name__ == "__main__":
