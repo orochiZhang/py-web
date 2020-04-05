@@ -11,11 +11,16 @@ class Container(BaseContainer):
             cls.classMap[name] = func
 
     @classmethod
-    def make(cls, name):
-        if name in cls.classMap.keys():
-            return cls.classMap[name]()
+    def make(cls, name, parameter=None):
+        if name in cls.contractMap:
+            name = cls.contractMap[name]
+        if name in cls.classMap:
+            if parameter:
+                return cls.classMap[name](*parameter)
+            else:
+                return cls.classMap[name]()
         else:
-            raise Exception('Facade not register')
+            raise Exception('Facade %s not register' % name)
 
     def register_module(self, providers):
         import importlib
@@ -30,3 +35,11 @@ class Container(BaseContainer):
         for c, m in aliases.items():
             module = importlib.import_module(m)
             getattr(module, c).set_facade_application(self)
+            
+    def boot(self):
+        for name, provider in self.classMap.items():
+            self.boot_provider(provider)
+            
+    def boot_provider(self, provider):
+        if hasattr(provider, 'boot'):
+            return getattr(provider, 'boot')()

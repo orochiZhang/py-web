@@ -2,10 +2,14 @@
 
 config = {
     'providers': {
-        'FileServiceProvider': 'vendor.Provider.FileServiceProvider'
+        'FileServiceProvider':      'vendor.Providers.FileServiceProvider',
+        'RequestServiceProvider':   'vendor.Providers.RequestServiceProvider',
+        'KernelServiceProvider':    'app.Providers.KernelServiceProvider',
+        # 'RouteServiceProvider':     'app.Http.Providers.RouteServiceProvider',
     },
 
     'aliases': {
-        'File': 'vendor.Facade.File'
+        'File': 'vendor.Facade.File',
+        'Route': 'vendor.Facade.Route',
     }
 }
