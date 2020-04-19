@@ -4,7 +4,7 @@ import vendor.Contracts.Request
 import vendor.Contracts.Router
 
 # 容器基类
-class BaseContainer(object):
+class Container(object):
     classMap = {}
 
     contractMap = {

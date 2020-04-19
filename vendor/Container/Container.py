@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from .BaseContainer import BaseContainer
+from vendor.Contracts.Container import Container as ContainerContract
 
 
 # 容器类
-class Container(BaseContainer):
+class Container(ContainerContract):
 
     @classmethod
     def register(cls, name, func):
