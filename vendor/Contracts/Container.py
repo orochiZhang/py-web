@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
+from abc import ABC, abstractmethod
 import vendor.Contracts.Kernel
 import vendor.Contracts.Request
 import vendor.Contracts.Router
 
-# 容器基类
+# Container Contracts
 class Container(object):
-    classMap = {}
+    
+    def __init__(self):
+        self.class_map = {}
+        self.contract_map = {
+            vendor.Contracts.Kernel.Kernel:     'kernel',
+            vendor.Contracts.Request.Request:   'request',
+            vendor.Contracts.Router.Router:     'router',
+        }
 
-    contractMap = {
-        vendor.Contracts.Kernel.Kernel:     'kernel',
-        vendor.Contracts.Request.Request:   'request',
-        vendor.Contracts.Router.Router:     'router',
-    }
-
-    @classmethod
-    def register(cls, name, func):
+    @abstractmethod
+    def register(self, name, func):
         pass
 
-    @classmethod
-    def make(cls, name):
+    @abstractmethod
+    def make(self, name):
         pass
