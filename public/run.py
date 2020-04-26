@@ -16,5 +16,4 @@ def application(request):
 
 if __name__ == "__main__":
     from werkzeug.serving import run_simple
-    app.init_application()
     run_simple("localhost", 5000, application)
