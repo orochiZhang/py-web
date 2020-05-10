@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 import vendor.Contracts.Kernel
 import vendor.Contracts.Request
-import vendor.Contracts.Router
+import vendor.Contracts.Route
 
 # Container Contracts
 class Container(object):
@@ -12,7 +12,7 @@ class Container(object):
         self.contract_map = {
             vendor.Contracts.Kernel.Kernel:     'kernel',
             vendor.Contracts.Request.Request:   'request',
-            vendor.Contracts.Router.Router:     'router',
+            vendor.Contracts.Route.Route:       'route',
         }
 
     @abstractmethod
