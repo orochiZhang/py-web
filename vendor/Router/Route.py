@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
+from vendor.Contracts.Container import Container
 from .Router import Router
 
 class Route():
     
     # hungry Singleton Pattern
-    def __init__(self):
+    def __init__(self, app: Container):
         #self.routers = [
         #   dict,
         #   router ojb,
         #   dict,
         #]
+        self.app = app
         self.routers = []
         self.routers_http_method = {
             "GET":      {},
@@ -78,3 +80,8 @@ class Route():
         router = Router(url, reflect_obj_method, 'UPDATE')
         self.add(router)
         return router
+
+    def dispatch(self, request):
+        pass
+        # todo
+        

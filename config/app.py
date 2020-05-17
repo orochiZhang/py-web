@@ -5,7 +5,7 @@ config = {
         'FileServiceProvider':      'vendor.Providers.FileServiceProvider',
         'RequestServiceProvider':   'vendor.Providers.RequestServiceProvider',
         'KernelServiceProvider':    'app.Providers.KernelServiceProvider',
-        # 'RouteServiceProvider':     'app.Http.Providers.RouteServiceProvider',
+        'RouteServiceProvider':     'app.Http.Providers.RouteServiceProvider',
     },
 
     'aliases': {

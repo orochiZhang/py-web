@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
-from vendor.Provider.ServiceProvider import ServiceProvider
-
+from vendor.Providers.ServiceProvider import ServiceProvider
+from vendor.Router.Route import Route
 
 
 # 简单的File服务提供者
 class RouteServiceProvider(ServiceProvider):
     
     def register(self):
-        pass
+        def get_route():
+            return self.app.get_singleton('Route')
+    
+        self.app.register('route', get_route)

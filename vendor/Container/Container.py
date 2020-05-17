@@ -7,6 +7,7 @@ class Container(ContainerContract):
     
     def __init__(self):
         self.instance_map = {}
+        self.singleton_map = {}
         super(Container, self).__init__()
 
     def register(self, name, func):
@@ -61,3 +62,10 @@ class Container(ContainerContract):
 
     def instance(self, name, obj):
         self.instance_map[name] = obj
+        
+    def singleton(self, name, obj):
+        self.instance_map[name] = obj
+    
+    def get_singleton(self, name):
+        return self.instance_map.get(name, None)
+    

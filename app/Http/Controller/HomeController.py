@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from vendor.Facade.File import File
+from werkzeug.wrappers import Response
 
-
-def test():
-    File().test()
+class HomeController():
+    
+    def test(self):
+        return Response("Hello, World!")
