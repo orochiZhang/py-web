@@ -11,11 +11,12 @@ import vendor.Contracts.Request
 @Request.application
 def application(request):
     _app = app.get_application()
-    _app.singleton('Route', RouteSingleton(_app))
-    Route.get('/home', 'HomeController@test')
+    _app.singleton('route', RouteSingleton(_app))
+    Route().get('/home', 'HomeController@test')
     kernel = _app.make(vendor.Contracts.Kernel.Kernel)
     http_request = _app.make(vendor.Contracts.Request.Request, [request.environ])
     response = kernel.handle(http_request)
+    print("response>>>", response)
     return response
     # return Response("Hello, World!")
 

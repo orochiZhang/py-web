@@ -51,8 +51,8 @@ class Pipeline (PipelineContract):
     # @param  \Closure  destination
     # @return mixed
     def then(self, destination):
-        self.pipes = self.pipes.reverse()
-        self.pipes.insert(self.prepareDestination(destination), 0)
+        self.pipes.reverse()
+        self.pipes.insert(0, self.prepareDestination(destination))
         pipeline = reduce(self.carry, self.pipes)
         return pipeline(self.passable)
 
@@ -73,7 +73,8 @@ class Pipeline (PipelineContract):
                 # If the pipe is an instance of a Closure, we will just call it directly but
                 # otherwise we'll resolve the pipes out of the container and call it with
                 # the appropriate method and arguments, returning the results back out.
-                return pipe(passable, stack)
+                print(pipe)
+                return pipe().handle(passable, stack)
             elif type(pipe) is str:
                 name, parameters = self.parsePipeString(pipe)
                 # If the pipe is a string we will parse the string and resolve the class out

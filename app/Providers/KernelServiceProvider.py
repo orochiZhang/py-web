@@ -8,6 +8,6 @@ class KernelServiceProvider(ServiceProvider):
     
     def register(self):
         def get_kernel():
-            return Kernel()
+            return Kernel(self.app, self.app.get_singleton("route"))
         
         self.app.register('kernel', get_kernel)

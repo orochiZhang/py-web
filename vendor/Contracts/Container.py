@@ -20,5 +20,5 @@ class Container(object):
         pass
 
     @abstractmethod
-    def make(self, name):
+    def make(self, name, parameter):
         pass

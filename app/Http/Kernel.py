@@ -30,13 +30,13 @@ class Kernel(object):
     # @param  \Illuminate\Http\Request  request
     # @return \Illuminate\Http\Response
     def handle(self, request):
-
-        try:
-            # request.enableHttpMethodParameterOverride()
-
-            response = self.sendRequestThroughRouter(request)
-        except:
-            response = None
+        response = self.sendRequestThroughRouter(request)
+        # try:
+        #     # request.enableHttpMethodParameterOverride()
+        #
+        #     response = self.sendRequestThroughRouter(request)
+        # except:
+        #     response = None
             # self.reportException(e)
             # response = self.renderException(request, e)
         # except Throwable e:
@@ -73,5 +73,5 @@ class Kernel(object):
         def function(request):
             nonlocal self
             self.app.instance('request', request)
-            return self.router.dispatch(request)
+            return self.route.dispatch(request)
         return function

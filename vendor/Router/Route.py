@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from vendor.Contracts.Container import Container
+from vendor.Pipeline.Pipeline import Pipeline
 from .Router import Router
 
 class Route():
@@ -26,6 +27,7 @@ class Route():
     def match_router(self, url: str, http_method: str):
         router = None
         for obj in self.routers:
+            print(obj, type(obj), url)
             if type(obj) is dict:
                 if url in obj.keys():
                     router = obj[url]
@@ -40,15 +42,16 @@ class Route():
                 raise Exception('404')
             else:
                 return self.routers_http_method[http_method][url]
-    
+        return router
+        
     def add(self, router: Router):
         if router.regular:
             self.routers.append(router)
         else:
-            if type(self.routers[-1]) is list:
-                self.routers[-1].append(router)
+            if self.routers and type(self.routers[-1]) is dict:
+                self.routers[-1][router.url] = router
             else:
-                self.routers.append([router])
+                self.routers.append({router.url: router})
         
         http_method = router.http_method
         self.routers_http_method[http_method][router.url] = router
@@ -82,6 +85,19 @@ class Route():
         return router
 
     def dispatch(self, request):
-        pass
-        # todo
-        
+        router_obj = self.match_router(request.url, request.method)
+        middleware = router_obj.middleware
+        name, method = router_obj.reflect_obj_method.split('@')
+        return (Pipeline(self.app)).send(request) \
+            .through(middleware) \
+            .then(self.make_and_run_method(name, method,request.parameter))
+    
+    def make_and_run_method(self, name, method, parameter=None):
+        obj = self.app.make_obj(name, parameter)
+        def run_method(request):
+            print(request)
+            if hasattr(obj, method):
+                return getattr(obj, method)()
+            else:
+                raise Exception("Object method not found")
+        return run_method
