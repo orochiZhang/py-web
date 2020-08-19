@@ -110,6 +110,8 @@ class Route():
         obj = self.app.make_obj(name, class_name, parameter)
         def run_method(request):
             if hasattr(obj, method):
+                if parameter:
+                    return getattr(obj, method)(parameter)
                 return getattr(obj, method)()
             else:
                 raise Exception("Object method not found")
