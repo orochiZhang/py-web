@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-class TestMiddleware():
+class TrimStrings():
+    
+    except_key = []
 
     #TestMiddleware
     #@param  \Illuminate\Http\Request  $request
@@ -8,5 +10,5 @@ class TestMiddleware():
     #@param  string|null  $guard
     #@return mixed
     def handle(self, request,  next_closure, guard=None):
-        print('Test Middleware')
+        
         return next_closure(request)

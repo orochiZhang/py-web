@@ -99,7 +99,7 @@ class Route():
 
     def dispatch(self, request):
         router_obj = self.match_router(request.url, request.method)
-        middleware = router_obj.middleware
+        middleware = router_obj.middleware[:]
         name, method = router_obj.reflect_obj_method.split('@')
         return (Pipeline(self.app)).send(request) \
             .through(middleware) \
