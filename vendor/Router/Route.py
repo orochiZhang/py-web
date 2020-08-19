@@ -63,23 +63,36 @@ class Route():
             self.group_namespace.append(namespace)
         if prefix:
             self.group_prefix.append(prefix)
-        
+    
+    def add_group(self, url, reflect_obj_method):
+        namespace = ''.join(self.group_namespace)
+        prefix = ''.join(self.group_prefix)
+        if namespace:
+            reflect_obj_method = namespace + reflect_obj_method
+        if prefix:
+            url = prefix + url
+        return url, reflect_obj_method
+    
     def get(self, url, reflect_obj_method):
+        url, reflect_obj_method = self.add_group(url, reflect_obj_method)
         router = Router(url, reflect_obj_method, 'GET')
         self.add(router)
         return router
 
     def post(self, url, reflect_obj_method):
+        url, reflect_obj_method = self.add_group(url, reflect_obj_method)
         router = Router(url, reflect_obj_method, 'POST')
         self.add(router)
         return router
 
     def delete(self, url, reflect_obj_method):
+        url, reflect_obj_method = self.add_group(url, reflect_obj_method)
         router = Router(url, reflect_obj_method, 'DELETE')
         self.add(router)
         return router
 
     def update(self, url, reflect_obj_method):
+        url, reflect_obj_method = self.add_group(url, reflect_obj_method)
         router = Router(url, reflect_obj_method, 'UPDATE')
         self.add(router)
         return router
@@ -90,10 +103,11 @@ class Route():
         name, method = router_obj.reflect_obj_method.split('@')
         return (Pipeline(self.app)).send(request) \
             .through(middleware) \
-            .then(self.make_and_run_method(name, method,request.parameter))
+            .then(self.make_and_run_method(name, method, request.parameter))
     
-    def make_and_run_method(self, name, method, parameter=None):
-        obj = self.app.make_obj(name, parameter)
+    def make_and_run_method(self, name:str, method:str, parameter=None):
+        class_name = name.split(".")[-1]
+        obj = self.app.make_obj(name, class_name, parameter)
         def run_method(request):
             if hasattr(obj, method):
                 return getattr(obj, method)()

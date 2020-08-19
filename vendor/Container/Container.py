@@ -15,13 +15,12 @@ class Container(ContainerContract):
         if name not in self.class_map.keys():
             self.class_map[name] = func
     
-    def make_obj(self, name:str, parameter=None):
-        m, c = 'app.Http.Controller.'+name, name
-        module = importlib.import_module(m)
+    def make_obj(self, module_name:str, class_name:str, parameter=None):
+        module = importlib.import_module(module_name)
         if parameter:
-            return getattr(module, c)(parameter)
+            return getattr(module, class_name)(parameter)
         else:
-            return getattr(module, c)()
+            return getattr(module, class_name)()
     
     # todo 注意传入参数少过需要的参数的情况
     def make(self, name, parameter=None):

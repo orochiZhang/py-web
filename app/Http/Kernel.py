@@ -55,4 +55,3 @@ class Kernel(object):
             self.app.instance('request', request)
             return self.route.dispatch(request)
         return function
-    
