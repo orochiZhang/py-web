@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from vendor.Contracts.Container import Container
 from vendor.Pipeline.Pipeline import Pipeline
+from vendor.Exception.Exception import PageNotFoundError
 from .Router import Router
 
 class Route():
@@ -27,7 +28,6 @@ class Route():
     def match_router(self, url: str, http_method: str):
         router = None
         for obj in self.routers:
-            print(obj, type(obj), url)
             if type(obj) is dict:
                 if url in obj.keys():
                     router = obj[url]
@@ -35,11 +35,11 @@ class Route():
                 if obj.match(url):
                     router = obj
         if not router:
-            raise Exception('404')
+            raise PageNotFoundError()
         # match http method
         if router.http_method != http_method:
             if url not in self.routers_http_method[http_method].keys():
-                raise Exception('404')
+                raise PageNotFoundError()
             else:
                 return self.routers_http_method[http_method][url]
         return router
@@ -95,7 +95,6 @@ class Route():
     def make_and_run_method(self, name, method, parameter=None):
         obj = self.app.make_obj(name, parameter)
         def run_method(request):
-            print(request)
             if hasattr(obj, method):
                 return getattr(obj, method)()
             else:

@@ -12,4 +12,5 @@ class TestMiddleware():
     #@return mixed
     def handle(self, request,  next_closure: Closure, guard=None):
         print('Test Middleware')
+        print(next_closure)
         return next_closure(request)

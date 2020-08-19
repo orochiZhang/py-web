@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from app.Http.Middleware.TestMiddleware import TestMiddleware
 from vendor.Pipeline.Pipeline import Pipeline
+from vendor.Exception.Exception import PageNotFoundError
+from werkzeug.wrappers import Response
 
 class Kernel(object):
     
@@ -30,24 +32,11 @@ class Kernel(object):
     # @param  \Illuminate\Http\Request  request
     # @return \Illuminate\Http\Response
     def handle(self, request):
-        response = self.sendRequestThroughRouter(request)
-        # try:
-        #     # request.enableHttpMethodParameterOverride()
-        #
-        #     response = self.sendRequestThroughRouter(request)
-        # except:
-        #     response = None
-            # self.reportException(e)
-            # response = self.renderException(request, e)
-        # except Throwable e:
-        #     self.reportException(e = new FatalThrowableError(e))
-        #
-        #     response = self.renderException(request, e)
-        # }
+        try:
+            response = self.sendRequestThroughRouter(request)
+        except PageNotFoundError:
+            response = Response("404", 404)
 
-        # self.app['events'].dispatch(
-        #     new Events\RequestHandled(request, response)
-        # )
         return response
 
     # Send the given request through the middleware / router.
@@ -56,15 +45,7 @@ class Kernel(object):
 
     def sendRequestThroughRouter(self, request):
         self.app.instance('request', request)
-
-        # Facade::clearResolvedInstance('request')
-
-        # self.bootstrap()
-        # if self.app.shouldSkipMiddleware():
-        #     middleware = []
-        # else:
-        #     middleware = self.middleware
-        middleware = self.middleware
+        middleware = self.middleware[:]
         return (Pipeline(self.app)).send(request)\
                     .through(middleware)\
                     .then(self.dispatchToRouter())
