@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from vendor.Providers.ServiceProvider import ServiceProvider
-from vendor.Router.Route import Route
 
 
 # 简单的File服务提供者

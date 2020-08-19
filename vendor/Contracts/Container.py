@@ -6,14 +6,12 @@ import vendor.Contracts.Route
 
 # Container Contracts
 class Container(object):
-    
-    def __init__(self):
-        self.class_map = {}
-        self.contract_map = {
-            vendor.Contracts.Kernel.Kernel:     'kernel',
-            vendor.Contracts.Request.Request:   'request',
-            vendor.Contracts.Route.Route:       'route',
-        }
+    class_map = {}
+    contract_map = {
+        vendor.Contracts.Kernel.Kernel: 'kernel',
+        vendor.Contracts.Request.Request: 'request',
+        vendor.Contracts.Route.Route: 'route',
+    }
 
     @abstractmethod
     def register(self, name, func):

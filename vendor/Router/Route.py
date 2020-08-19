@@ -10,7 +10,7 @@ class Route():
     def __init__(self, app: Container):
         #self.routers = [
         #   dict,
-        #   router ojb,
+        #   router obj,
         #   dict,
         #]
         self.app = app

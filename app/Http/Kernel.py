@@ -42,7 +42,6 @@ class Kernel(object):
     # Send the given request through the middleware / router.
     # @param  \Illuminate\Http\Request  request
     # @return \Illuminate\Http\Response
-
     def sendRequestThroughRouter(self, request):
         self.app.instance('request', request)
         middleware = self.middleware[:]
@@ -56,3 +55,4 @@ class Kernel(object):
             self.app.instance('request', request)
             return self.route.dispatch(request)
         return function
+    

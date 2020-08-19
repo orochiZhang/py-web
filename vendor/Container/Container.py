@@ -5,10 +5,11 @@ import importlib
 
 class Container(ContainerContract):
     
+    singleton_map = {}
+    
     def __init__(self):
-        self.instance_map = {}
-        self.singleton_map = {}
         super(Container, self).__init__()
+        self.instance_map = {}
 
     def register(self, name, func):
         if name not in self.class_map.keys():
