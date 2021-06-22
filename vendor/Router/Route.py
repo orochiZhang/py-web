@@ -1,60 +1,74 @@
 # -*- coding: utf-8 -*-
 from vendor.Contracts.Container import Container
 from vendor.Pipeline.Pipeline import Pipeline
-from vendor.Exception.Exception import PageNotFoundError
+from vendor.Exception.Exception import PageNotFoundError, MethodNotAllowError
 from .Router import Router
 
 class Route():
     
     # hungry Singleton Pattern
     def __init__(self, app: Container):
-        #self.routers = [
-        #   dict,
-        #   router obj,
-        #   dict,
-        #]
+        self.last_id = 0
         self.app = app
-        self.routers = []
-        self.routers_http_method = {
+        self.routers = {
             "GET":      {},
             "POST":     {},
             "DELETE":   {},
             "UPDATE":   {},
         }
+        self.regular_routers = {
+            "GET":      [],
+            "POST":     [],
+            "DELETE":   [],
+            "UPDATE":   [],
+        }
+        
         self.group_middle = []
         self.group_namespace = []
         self.group_prefix = []
         
-    def match_router(self, url: str, http_method: str):
-        router = None
-        for obj in self.routers:
-            if type(obj) is dict:
-                if url in obj.keys():
-                    router = obj[url]
-            elif type(obj) is Router:
-                if obj.match(url):
-                    router = obj
+    def match_router(self, url: str, http_method: str) -> Router:
+        router = self.routers[http_method].get(url, None)
+        
+        for obj in self.regular_routers[http_method]:
+            if obj.ID > router.ID:
+                break
+            if obj.match(url):
+                router = obj
         if not router:
-            raise PageNotFoundError()
-        # match http method
-        if router.http_method != http_method:
-            if url not in self.routers_http_method[http_method].keys():
-                raise PageNotFoundError()
-            else:
-                return self.routers_http_method[http_method][url]
+            router = self.match_router_in_other_http_method(url, http_method)
+            if router:
+                raise MethodNotAllowError
+        if not router:
+            raise PageNotFoundError
+        return router
+    
+    def match_router_in_other_http_method(self, url: str, http_method: str) -> Router:
+        method_list = ['GET', 'POST', 'UPDATE', 'DELETE']
+        method_list.remove(http_method)
+        
+        for method in method_list:
+            router = self.routers[method].get(url, None)
+            if router:
+                return router
+            for obj in self.regular_routers[http_method]:
+                if obj.match(url):
+                    return router
         return router
         
     def add(self, router: Router):
-        if router.regular:
-            self.routers.append(router)
-        else:
-            if self.routers and type(self.routers[-1]) is dict:
-                self.routers[-1][router.url] = router
-            else:
-                self.routers.append({router.url: router})
-        
         http_method = router.http_method
-        self.routers_http_method[http_method][router.url] = router
+        if http_method not in ['GET', 'POST', 'UPDATE', 'DELETE']:
+            return
+        if router.regular:
+            self.regular_routers[http_method].append(router)
+        else:
+            if router.url in self.routers[http_method]:
+                # todo warning
+                pass
+            self.routers[http_method][router.url] = router
+            
+        
         
     def group(self, middleware=None, namespace='', prefix=''):
         if middleware:
@@ -75,26 +89,30 @@ class Route():
     
     def get(self, url, reflect_obj_method):
         url, reflect_obj_method = self.add_group(url, reflect_obj_method)
-        router = Router(url, reflect_obj_method, 'GET')
+        router = Router(url, reflect_obj_method, 'GET', self.last_id)
         self.add(router)
+        self.last_id += 1
         return router
 
     def post(self, url, reflect_obj_method):
         url, reflect_obj_method = self.add_group(url, reflect_obj_method)
-        router = Router(url, reflect_obj_method, 'POST')
+        router = Router(url, reflect_obj_method, 'POST', self.last_id)
         self.add(router)
+        self.last_id += 1
         return router
 
     def delete(self, url, reflect_obj_method):
         url, reflect_obj_method = self.add_group(url, reflect_obj_method)
-        router = Router(url, reflect_obj_method, 'DELETE')
+        router = Router(url, reflect_obj_method, 'DELETE', self.last_id)
         self.add(router)
+        self.last_id += 1
         return router
 
     def update(self, url, reflect_obj_method):
         url, reflect_obj_method = self.add_group(url, reflect_obj_method)
-        router = Router(url, reflect_obj_method, 'UPDATE')
+        router = Router(url, reflect_obj_method, 'UPDATE', self.last_id)
         self.add(router)
+        self.last_id += 1
         return router
 
     def dispatch(self, request):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from vendor.Contracts.Kernel import Kernel as KernelContract
 from vendor.Pipeline.Pipeline import Pipeline
-from vendor.Exception.Exception import PageNotFoundError
+from vendor.Exception.Exception import PageNotFoundError, MethodNotAllowError
 from werkzeug.wrappers import Response
 
 class Kernel(KernelContract):
@@ -32,6 +32,8 @@ class Kernel(KernelContract):
             response = self.sendRequestThroughRouter(request)
         except PageNotFoundError:
             response = Response("404", 404)
+        except MethodNotAllowError:
+            response = Response("405", 405)
         
         return response
     

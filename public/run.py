@@ -2,7 +2,6 @@
 from werkzeug.wrappers import Request
 from bootstrap import app
 
-
 import vendor.Contracts.Kernel
 import vendor.Contracts.Request
 
@@ -19,4 +18,3 @@ if __name__ == "__main__":
     from werkzeug.serving import run_simple
     app.boot()
     run_simple("localhost", 5000, application)
-    

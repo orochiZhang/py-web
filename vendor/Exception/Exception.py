@@ -2,3 +2,6 @@
 
 class PageNotFoundError(Exception):
     pass
+
+class MethodNotAllowError(Exception):
+    pass
