@@ -67,9 +67,7 @@ class Route():
                 # todo warning
                 pass
             self.routers[http_method][router.url] = router
-            
-        
-        
+    
     def group(self, middleware=None, namespace='', prefix=''):
         if middleware:
             self.group_middle.append(middleware)

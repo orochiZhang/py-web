@@ -2,4 +2,4 @@
 from vendor.Facade.Route import Route
 
 def init():
-    Route().post('/home', 'HomeController@test')
+    Route().get('/home', 'HomeController@test')

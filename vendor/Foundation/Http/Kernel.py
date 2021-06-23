@@ -23,13 +23,14 @@ class Kernel(KernelContract):
         self.app = app
         self.route = route
     
-    # Handle an incoming HTTP request.
-    #
-    # @param  \Illuminate\Http\Request  request
-    # @return \Illuminate\Http\Response
     def handle(self, request):
+        """
+        Handle an incoming HTTP request.
+        @param request: vendor.Http.Request
+        @return: vendor.Http.esponse
+        """
         try:
-            response = self.sendRequestThroughRouter(request)
+            response = self.send_request_through_router(request)
         except PageNotFoundError:
             response = Response("404", 404)
         except MethodNotAllowError:
@@ -37,20 +38,23 @@ class Kernel(KernelContract):
         
         return response
     
-    # Send the given request through the middleware / router.
-    # @param  \Illuminate\Http\Request  request
-    # @return \Illuminate\Http\Response
-    def sendRequestThroughRouter(self, request):
+    def send_request_through_router(self, request):
+        """
+        Send the given request through the middleware / router.
+        @param request: vendor.Http.Request
+        @return: vendor.Http.Response
+        """
         self.app.instance('request', request)
         middleware = self.middleware[:]
         return (Pipeline(self.app)).send(request) \
             .through(middleware) \
-            .then(self.dispatchToRouter())
+            .then(self.dispatch_to_router)
     
-    def dispatchToRouter(self):
-        def function(request):
-            nonlocal self
-            self.app.instance('request', request)
-            return self.route.dispatch(request)
-        
-        return function
+    def dispatch_to_router(self, request):
+        """
+        search router by request url.
+        @param request: vendor.Http.Request
+        @return: vendor.Http.Response
+        """
+        self.app.instance('request', request)
+        return self.route.dispatch(request)

@@ -2,9 +2,9 @@
 from functools import reduce
 from vendor.Contracts.Pipeline import Pipeline as PipelineContract
 
-class Pipeline (PipelineContract):
+class Pipeline(PipelineContract):
     # The container implementation.
-    # @var \Contracts\Container
+    # @var Contracts.Container
     container = None
 
     # The object being passed through the pipeline.
@@ -19,68 +19,84 @@ class Pipeline (PipelineContract):
     # @var string
     method = 'handle'
 
-    # Create a new class instance.
-    # @param  \Contracts\Container|null  container
-    # @return void
-    def __init__(self, container = None):
+    def __init__(self, container=None):
+        """
+        Create a new class instance.
+        @param container: Contracts.Container|null
+        """
         self.container = container
 
-    # Set the object being sent through the pipeline.
-    # @param  mixed  $passable
-    # @return self
     def send(self, passable):
-
+        """
+        Set the object being sent through the pipeline.
+        @param passable: mixed
+        @return: self
+        """
         self.passable = passable
         return self
 
-    # Set the array of pipes.
-    # @param  array|mixed  $pipes
-    # @return self
     def through(self, pipes, *args):
+        """
+        Set the array of pipes.
+        @param pipes: array|mixed
+        @param args: mixed
+        @return: self
+        """
         self.pipes = pipes if type(pipes) is list else args
         return self
 
-    # Set the method to call on the pipes.
-    # @param  string  method
-    # @return self
     def via(self, method):
+        """
+        Set the method to call on the pipes.
+        @param method: string
+        @return: self
+        """
         self.method = method
         return self
 
-    # Run the pipeline with a final destination callback.
-    # @param  \Closure  destination
-    # @return mixed
     def then(self, destination):
+        """
+        Run the pipeline with a final destination callback.
+        @param destination: Closure
+        @return: mixed
+        """
         self.pipes.reverse()
         self.pipes.insert(0, destination)
         pipeline = reduce(self.carry, self.pipes)
         return pipeline(self.passable)
 
-    # Get the final piece of the Closure onion.
-    # @param  \Closure  $destination
-    # @return \Closure
-    def prepareDestination(self, destination):
+    def prepare_destination(self, destination):
+        """
+        Get the final piece of the Closure onion.
+        @param destination: Closure
+        @return: Closure
+        """
         def closure(passable):
             return destination(passable)
         return closure
 
-    # Get a Closure that represents a slice of the application onion.
-    # @return \Closure
-    def carry(self, stack, pipe):
-        def function1(passable):
+    def carry(self, stack: list, pipe):
+        """
+        Get a Closure that represents a slice of the application onion.
+        @param stack: list
+        @param pipe:
+        @return: Closure
+        """
+        def create_closure(passable):
             nonlocal pipe
+            nonlocal self
             if callable(pipe):
                 # If the pipe is an instance of a Closure, we will just call it directly but
                 # otherwise we'll resolve the pipes out of the container and call it with
                 # the appropriate method and arguments, returning the results back out.
-                
+                print("callable(pipe)", pipe)
                 return pipe().handle(passable, stack)
             elif type(pipe) is str:
-                name, parameters = self.parsePipeString(pipe)
+                name, parameters = self.parse_pipe_string(pipe)
                 # If the pipe is a string we will parse the string and resolve the class out
                 # of the dependency injection container. We can then build a callable and
                 # execute the pipe function giving in the parameters that are required.
-                pipe = self.getContainer().make(name)
+                pipe = self.get_container().make(name)
 
                 parameters = [passable, stack, parameters]
             else:
@@ -90,27 +106,30 @@ class Pipeline (PipelineContract):
                 parameters = [passable, stack]
             
             if hasattr(pipe, self.method):
+                print("pipe, self.method", pipe)
                 return getattr(pipe, self.method)(*parameters)
             else:
                 return pipe(*parameters)
         
-        return function1
-
-    # Parse full pipe string to get name and parameters.
-    # @param  string $pipe
-    # @return array
-    def parsePipeString(self, pipe: str):
+        return create_closure
+    
+    def parse_pipe_string(self, pipe: str):
+        """
+        Parse full pipe string to get name and parameters.
+        @param pipe: string
+        @return: array
+        """
         name, parameters = pipe.split(":", 2)
-        
         if type(parameters) is str:
             parameters = parameters.split(",")
-        
         return name, parameters
 
-    # Get the container instance.
-    # @return \Illuminate\Contracts\Container\Container
-    # @throws \RuntimeException
-    def getContainer(self):
+    def get_container(self):
+        """
+        Get the container instance.
+        @return: Contracts.Container
+        @throws Exception
+        """
         if not self.container:
             raise Exception('A container instance has not been passed to the Pipeline.')
         
