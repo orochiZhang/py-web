@@ -3,6 +3,7 @@ from vendor.Facade.Route import Route
 
 import routes.api as api
 
+
 class RouteBoot():
     namespace = 'app.Http.Controller.'
     
@@ -11,15 +12,15 @@ class RouteBoot():
         self.map()
     
     def map(self):
-        self.mapApiRoutes()
-        self.mapWebRoutes()
-        self.mapAdminRoutes()
+        self.init_api_routes()
+        self.init_web_routes()
+        self.init_admin_routes()
     
-    def mapApiRoutes(self):
+    def init_api_routes(self):
         api.init()
     
-    def mapWebRoutes(self):
+    def init_web_routes(self):
         pass
     
-    def mapAdminRoutes(self):
+    def init_admin_routes(self):
         pass
