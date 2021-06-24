@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from functools import reduce
+from inspect import isfunction, ismethod
 from vendor.Contracts.Pipeline import Pipeline as PipelineContract
 
 class Pipeline(PipelineContract):
@@ -85,12 +86,16 @@ class Pipeline(PipelineContract):
         def create_closure(passable):
             nonlocal pipe
             nonlocal self
-            if callable(pipe):
-                # If the pipe is an instance of a Closure, we will just call it directly but
+            if ismethod(pipe) or isfunction(pipe):
+                # If the pipe is a function type, we will just call it directly but
                 # otherwise we'll resolve the pipes out of the container and call it with
                 # the appropriate method and arguments, returning the results back out.
-                print("callable(pipe)", pipe)
-                return pipe().handle(passable, stack)
+                return pipe(passable, stack)
+            elif pipe is type:
+                # If the pipe is a class type, we will just call it directly and
+                # create an instance of the class.
+                pipe = pipe()
+                parameters = [passable, stack]
             elif type(pipe) is str:
                 name, parameters = self.parse_pipe_string(pipe)
                 # If the pipe is a string we will parse the string and resolve the class out
@@ -100,14 +105,13 @@ class Pipeline(PipelineContract):
 
                 parameters = [passable, stack, parameters]
             else:
-                # If the pipe is already an object we'll just make a callable and pass it to
+                # If the pipe is already an instance of class, we'll just make a callable and pass it to
                 # the pipe as-is. There is no need to do any extra parsing and formatting
                 # since the object we're given was already a fully instantiated object.
                 parameters = [passable, stack]
             
             if hasattr(pipe, self.method):
-                print("pipe, self.method", pipe)
-                return getattr(pipe, self.method)(*parameters)
+                return getattr(pipe, self.method)(pipe, *parameters)
             else:
                 return pipe(*parameters)
         
@@ -132,7 +136,4 @@ class Pipeline(PipelineContract):
         """
         if not self.container:
             raise Exception('A container instance has not been passed to the Pipeline.')
-        
         return self.container
-
-

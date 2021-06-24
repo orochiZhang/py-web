@@ -16,4 +16,4 @@ class Kernel(BaseKernel):
     # The application's route middleware groups.
     # @ var dict
     middlewareGroups = {}
-    
+
