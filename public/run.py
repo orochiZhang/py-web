@@ -14,6 +14,7 @@ def application(request):
     response = kernel.handle(http_request)
     return response
 
+
 if __name__ == "__main__":
     app.boot()
     run_simple("localhost", 5000, application)

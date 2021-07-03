@@ -3,20 +3,21 @@
 
 # 门面元类
 class Facade(type):
-    '''
-     * Get the registered name of the component.
-     *
-     * @return string
-    '''
+
+    
     app = None
 
     @staticmethod
-    def get_facade_accessor():
-        pass
+    def get_facade_accessor() -> str:
+        """
+        Get the registered name of the component.
+        @return: string
+        """
+        return ''
 
     @classmethod
-    def set_facade_application(cls, app):
-        cls.app = app
+    def set_facade_application(mcs, app):
+        mcs.app = app
 
     def __call__(cls, *args, **kwargs):
         if cls.app is None:
