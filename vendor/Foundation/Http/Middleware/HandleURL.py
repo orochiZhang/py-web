@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from vendor.Contracts.Middleware import Middleware
+from vendor.Contracts.Request import Request
 
-class TrimStrings(Middleware):
+class HandleURL(Middleware):
     
     except_key = []
 
@@ -12,8 +13,8 @@ class TrimStrings(Middleware):
         @param guard: string|null
         @return: mixed
         """
-        for key in self.except_key:
-            if request.has_parameter(key):
-                content = request.get_parameter(key).strip()
-                request.set_parameter(key, content)
+        url = request.url
+        if not url.endswith('/'):
+            url += '/'
+        request.url = url.replace('//', '/')
         return next_closure(request)

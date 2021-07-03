@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from app.Http.Middleware.TestMiddleware import TestMiddleware
 from app.Http.Middleware.TrimStrings import TrimStrings
+from vendor.Foundation.Http.Middleware.HandleURL import HandleURL
 from vendor.Foundation.Http.Kernel import Kernel as BaseKernel
 
 class Kernel(BaseKernel):
@@ -10,7 +11,8 @@ class Kernel(BaseKernel):
     # @var array
     middleware = [
         TestMiddleware,
-        TrimStrings
+        TrimStrings,
+        HandleURL,
     ]
     
     # The application's route middleware groups.

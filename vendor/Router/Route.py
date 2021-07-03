@@ -46,7 +46,7 @@ class Route():
     def match_router_in_other_http_method(self, url: str, http_method: str) -> Router:
         method_list = ['GET', 'POST', 'UPDATE', 'DELETE']
         method_list.remove(http_method)
-        
+        router = None
         for method in method_list:
             router = self.routers[method].get(url, None)
             if router:
@@ -74,7 +74,19 @@ class Route():
         if namespace:
             self.group_namespace.append(namespace)
         if prefix:
+            if not prefix.startswith('/'):
+                prefix = '/' + prefix
             self.group_prefix.append(prefix)
+    
+    def pop_group(self, middleware=None, namespace='', prefix=''):
+        if middleware:
+            self.group_middle.remove(middleware)
+        if namespace:
+            self.group_namespace.remove(namespace)
+        if prefix:
+            if not prefix.startswith('/'):
+                prefix = '/' + prefix
+            self.group_prefix.remove(prefix)
     
     def add_group(self, url, reflect_obj_method):
         namespace = ''.join(self.group_namespace)
@@ -83,6 +95,9 @@ class Route():
             reflect_obj_method = namespace + reflect_obj_method
         if prefix:
             url = prefix + url
+        if not url.endswith('/'):
+            url += '/'
+        url = url.replace('//', '/')
         return url, reflect_obj_method
     
     def get(self, url, reflect_obj_method):
@@ -121,7 +136,7 @@ class Route():
             .through(middleware) \
             .then(self.make_and_run_method(name, method, request.parameter))
     
-    def make_and_run_method(self, name:str, method:str, parameter=None):
+    def make_and_run_method(self, name: str, method: str, parameter=None):
         class_name = name.split(".")[-1]
         obj = self.app.make_obj(name, class_name, parameter)
         def run_method(request):
