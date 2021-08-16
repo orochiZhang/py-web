@@ -2,6 +2,7 @@
 from functools import reduce
 from inspect import isfunction, ismethod
 from vendor.Contracts.Pipeline import Pipeline as PipelineContract
+from vendor.Foundation.helper import Functor
 
 class Pipeline(PipelineContract):
     # The container implementation.
@@ -83,39 +84,36 @@ class Pipeline(PipelineContract):
         @param pipe:
         @return: Closure
         """
-        def create_closure(passable):
-            nonlocal pipe
-            nonlocal self
-            if ismethod(pipe) or isfunction(pipe):
-                # If the pipe is a function type, we will just call it directly but
-                # otherwise we'll resolve the pipes out of the container and call it with
-                # the appropriate method and arguments, returning the results back out.
-                return pipe(passable, stack)
-            elif pipe is type:
-                # If the pipe is a class type, we will just call it directly and
-                # create an instance of the class.
-                pipe = pipe()
-                parameters = [passable, stack]
-            elif type(pipe) is str:
-                name, parameters = self.parse_pipe_string(pipe)
-                # If the pipe is a string we will parse the string and resolve the class out
-                # of the dependency injection container. We can then build a callable and
-                # execute the pipe function giving in the parameters that are required.
-                pipe = self.get_container().make(name)
+        return Functor(self.create_closure, stack, pipe)
 
-                parameters = [passable, stack, parameters]
-            else:
-                # If the pipe is already an instance of class, we'll just make a callable and pass it to
-                # the pipe as-is. There is no need to do any extra parsing and formatting
-                # since the object we're given was already a fully instantiated object.
-                parameters = [passable, stack]
-            
-            if hasattr(pipe, self.method):
-                return getattr(pipe, self.method)(pipe, *parameters)
-            else:
-                return pipe(*parameters)
-        
-        return create_closure
+    def create_closure(self, stack: list, pipe, passable):
+        if ismethod(pipe) or isfunction(pipe):
+            # If the pipe is a function type, we will just call it directly but
+            # otherwise we'll resolve the pipes out of the container and call it with
+            # the appropriate method and arguments, returning the results back out.
+            return pipe(passable, stack)
+        elif pipe is type:
+            # If the pipe is a class type, we will just call it directly and
+            # create an instance of the class.
+            pipe = pipe()
+            parameters = [passable, stack]
+        elif type(pipe) is str:
+            name, parameters = self.parse_pipe_string(pipe)
+            # If the pipe is a string we will parse the string and resolve the class out
+            # of the dependency injection container. We can then build a callable and
+            # execute the pipe function giving in the parameters that are required.
+            pipe = self.get_container().make(name)
+            parameters = [passable, stack, parameters]
+        else:
+            # If the pipe is already an instance of class, we'll just make a callable and pass it to
+            # the pipe as-is. There is no need to do any extra parsing and formatting
+            # since the object we're given was already a fully instantiated object.
+            parameters = [passable, stack]
+    
+        if hasattr(pipe, self.method):
+            return getattr(pipe, self.method)(pipe, *parameters)
+        else:
+            return pipe(*parameters)
     
     def parse_pipe_string(self, pipe: str):
         """

@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+from abc import ABC, abstractmethod
 
-class Middleware(object):
+
+class Middleware(ABC):
     
+    @abstractmethod
     def handle(self, request, next_closure, guard=None):
         """
         @param request: vendor.Http.Request

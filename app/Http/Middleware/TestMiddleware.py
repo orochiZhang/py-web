@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from vendor.Contracts.Middleware import Middleware as MiddlewareContract
 
-class TestMiddleware():
+
+class TestMiddleware(MiddlewareContract):
 
     def handle(self, request, next_closure, guard=None):
         """

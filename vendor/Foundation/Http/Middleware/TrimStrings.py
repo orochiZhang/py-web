@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from vendor.Contracts.Middleware import Middleware
+from vendor.Contracts.Middleware import Middleware as MiddlewareContract
 
-class TrimStrings(Middleware):
+
+class TrimStrings(MiddlewareContract):
     
     except_key = []
 

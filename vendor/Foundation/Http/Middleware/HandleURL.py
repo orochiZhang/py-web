@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from vendor.Contracts.Middleware import Middleware
+from vendor.Contracts.Middleware import Middleware as MiddlewareContract
 from vendor.Contracts.Request import Request
 
-class HandleURL(Middleware):
+class HandleURL(MiddlewareContract):
     
     except_key = []
 
-    def handle(self, request, next_closure, guard=None):
+    def handle(self, request: Request, next_closure: MiddlewareContract.handle, guard=None):
         """
         @param request: vendor.Http.Request
         @param next_closure: vendor.Contracts.Closure

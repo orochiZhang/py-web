@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from abc import ABC, abstractmethod
 
-class Closure():
+
+class Closure(object):
     pass
 
 class Pipeline(ABC):

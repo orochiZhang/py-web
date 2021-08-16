@@ -4,6 +4,7 @@ from vendor.Pipeline.Pipeline import Pipeline
 from vendor.Exception.Exception import PageNotFoundError, MethodNotAllowError
 from werkzeug.wrappers import Response
 
+
 class Kernel(KernelContract):
     # The application's global HTTP middleware stack.
     # These middleware are run during every request to your application.
@@ -27,7 +28,7 @@ class Kernel(KernelContract):
         """
         Handle an incoming HTTP request.
         @param request: vendor.Http.Request
-        @return: vendor.Http.esponse
+        @return: vendor.Http.response
         """
         try:
             response = self.send_request_through_router(request)

@@ -4,6 +4,7 @@ from app.Http.Middleware.TrimStrings import TrimStrings
 from vendor.Foundation.Http.Middleware.HandleURL import HandleURL
 from vendor.Foundation.Http.Kernel import Kernel as BaseKernel
 
+
 class Kernel(BaseKernel):
     
     # The application's global HTTP middleware stack.
